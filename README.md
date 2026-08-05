@@ -51,8 +51,4 @@ streamlit run app.py
 
 **Developer**: Surya Dutta
 
-If you'd like, I can also:
-- add a `LICENSE` file,
-- commit and push these documentation changes (I can push now),
-- or add a small CI workflow for tests.
 
