@@ -85,8 +85,11 @@ def main():
             st.dataframe(df.head())
             if st.button("Predict uploaded data"):
                 results = predict_dataframe(df, model, scaler)
-                st.write("Results:")
-                st.dataframe(pd.concat([df.reset_index(drop=True).iloc[:, :30], results], axis=1))
+                out = pd.concat([df.reset_index(drop=True).iloc[:, :30], results], axis=1)
+                out = out.rename(columns={"prediction": "Diagnosis", "confidence": "Confidence"})
+                st.write("Results — Diagnosis")
+                # show diagnosis and confidence clearly
+                st.dataframe(out[["Diagnosis", "Confidence"]])
         except Exception as e:
             st.error(f"Error processing uploaded file: {e}")
 
@@ -99,8 +102,15 @@ def main():
         try:
             df_sample = pd.DataFrame(sample, columns=FEATURE_NAMES)
             res = predict_dataframe(df_sample, model, scaler)
-            st.write("Prediction:")
-            st.write(res.to_dict(orient="records")[0])
+            # Display clear diagnosis and confidence
+            diagnosis = res.loc[0, "prediction"]
+            confidence = res.loc[0, "confidence"]
+            st.subheader(f"Diagnosis: {diagnosis}")
+            st.write(f"Confidence: {confidence:.3f}")
+            if diagnosis == "Malignant":
+                st.error("Model predicts a malignant tumor — please consult a medical professional.")
+            else:
+                st.success("Model predicts a benign tumor.")
         except Exception as e:
             st.error(f"Prediction error: {e}")
 
